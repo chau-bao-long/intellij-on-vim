@@ -2,7 +2,7 @@ local api = vim.api
 local M = {}
 
 M.setup = function(opt)
-  dump(api.nvim_list_chans)
+  require("intellij-on-vim.events").setup()
 end
 
 return M
