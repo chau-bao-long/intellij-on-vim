@@ -1,5 +1,6 @@
 local Channels = require("intellij-on-vim.channels")
 local M = {}
+local is_vim_focused = true
 
 local function notify_buffer_enter()
   local buf_id = vim.api.nvim_get_current_buf()
@@ -17,10 +18,26 @@ end
 M.setup = function()
   vim.api.nvim_create_autocmd("BufEnter", {
 		callback = function(event)
-      notify_buffer_enter()
+      if is_vim_focused then
+        notify_buffer_enter()
+      end
     end,
-		group = vim.api.nvim_create_augroup("lsp_document_format", {clear = true})
+		group = vim.api.nvim_create_augroup("intellij_on_vim_buf_enter", {clear = true})
 	})
+
+  vim.api.nvim_create_autocmd("FocusGained", {
+    callback = function(event)
+      is_vim_focused =  true
+    end,
+    group = vim.api.nvim_create_augroup("intellij_on_vim_focus_gained", {clear = true})
+  })
+
+  vim.api.nvim_create_autocmd("FocusLost", {
+    callback = function(event)
+      is_vim_focused =  false
+    end,
+    group = vim.api.nvim_create_augroup("intellij_on_vim_focus_lost", {clear = true})
+  })
 end
 
 
