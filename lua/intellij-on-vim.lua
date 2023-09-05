@@ -1,4 +1,5 @@
 local RPC = require("intellij-on-vim.rpc")
+local events = require("intellij-on-vim.events")
 local api = vim.api
 local M = {}
 
@@ -7,11 +8,8 @@ M.setup = function(opt)
 end
 
 M.move_cursor = function(offset)
-  local mode = vim.api.nvim_get_mode().mode
-
-  if mode == "i" then
-    -- Caret position change event keep triggering when typing.
-    -- Don't move cursor in insert mode to avoid this annoying issue.
+  if events.is_vim_focused then
+    -- Don't move cursor when vim is focused to prevent bounce back event from intellij
     return
   end
 
