@@ -2,15 +2,23 @@ local Channels = require("intellij-on-vim.channels")
 local RPC = require('intellij-on-vim.rpc')
 local M = {}
 local is_vim_focused = true
+local timer = nil
 
 M.setup = function()
   vim.api.nvim_create_autocmd("BufEnter", {
 		callback = function(event)
       if is_vim_focused then
-        local buf_id = vim.api.nvim_get_current_buf()
-        local buf_path = vim.api.nvim_buf_get_name(0)
+        if timer ~= nil then
+          vim.fn.timer_stop(timer)
+        end
+        timer = vim.fn.timer_start(200, function ()
+          local buf_id = vim.api.nvim_get_current_buf()
+          local buf_path = vim.api.nvim_buf_get_name(0)
 
-        RPC.notify_buffer_enter(buf_id, buf_path)
+          RPC.notify_buffer_enter(buf_id, buf_path)
+
+          timer = nil
+        end)
       end
     end,
 		group = vim.api.nvim_create_augroup("intellij_on_vim_buf_enter", {clear = true})
