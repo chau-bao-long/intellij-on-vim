@@ -62,7 +62,7 @@ M.setup = function()
     callback = function(event)
       vim.cmd("w")
     end,
-    group = vim.api.nvim_create_augroup("intellij_on_vim_focus_lost", {clear = true}),
+    group = vim.api.nvim_create_augroup("intellij_on_vim_focus_lost_kotlin_file", {clear = true}),
     pattern = {"*.kt","*.kts"}
   })
 end
