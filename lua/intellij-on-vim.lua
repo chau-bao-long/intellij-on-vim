@@ -19,12 +19,4 @@ M.move_cursor = function(offset)
   vim.fn.cursor(line, col)
 end
 
--- Sync cursor position from buffer nvim to intelliJ
-M.sync_cursor = function()
-  local file = vim.fn.expand("%:p")
-  local offset = vim.fn.line2byte(vim.fn.line('.')) + vim.fn.col('.') - 2
-
-  RPC.request_sync_cursor(file, offset)
-end
-
 return M
