@@ -23,44 +23,45 @@ M.setup = function()
 		group = vim.api.nvim_create_augroup("intellij_on_vim_buf_enter", {clear = true})
 	})
 
-  vim.api.nvim_create_autocmd("CursorMoved", {
+  vim.api.nvim_create_autocmd("BufWritePost", {
     callback = function()
       if M.is_vim_focused then
         if cursor_move_timer ~= nil then
           vim.fn.timer_stop(cursor_move_timer)
         end
-        cursor_move_timer = vim.fn.timer_start(200, function ()
+        cursor_move_timer = vim.fn.timer_start(300, function ()
           Actions.sync_cursor()
 
           cursor_move_timer = nil
         end)
       end
-    end
+    end,
+    group = vim.api.nvim_create_augroup("intellij_on_vim_buf_write_post", {clear = true}),
   })
 
   vim.api.nvim_create_autocmd("FocusGained", {
     callback = function(event)
       M.is_vim_focused =  true
     end,
-    group = vim.api.nvim_create_augroup("intellij_on_vim_focus_gained", {clear = true})
+    group = vim.api.nvim_create_augroup("intellij_on_vim_focus_gained", {clear = true}),
   })
 
   vim.api.nvim_create_autocmd("FocusLost", {
     callback = function(event)
       M.is_vim_focused =  false
     end,
-    group = vim.api.nvim_create_augroup("intellij_on_vim_focus_lost", {clear = true})
+    group = vim.api.nvim_create_augroup("intellij_on_vim_focus_lost", {clear = true}),
   })
 
   vim.api.nvim_create_autocmd("FocusLost", {
     callback = function(event)
       vim.cmd("w")
-      vim.fn.timer_start(300, function ()
+      vim.fn.timer_start(500, function ()
         Actions.sync_cursor()
       end)
     end,
     group = vim.api.nvim_create_augroup("intellij_on_vim_focus_lost_kotlin_file", {clear = true}),
-    pattern = {"*.kt","*.kts"}
+    pattern = {"*.kt","*.kts"},
   })
 end
 
