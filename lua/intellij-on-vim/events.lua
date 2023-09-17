@@ -2,7 +2,6 @@ local M = {}
 local Channels = require("intellij-on-vim.channels")
 local Actions = require('intellij-on-vim.actions')
 local buf_enter_timer = nil
-local cursor_move_timer = nil
 
 M.is_vim_focused = true
 
@@ -26,14 +25,7 @@ M.setup = function()
   vim.api.nvim_create_autocmd("BufWritePost", {
     callback = function()
       if M.is_vim_focused then
-        if cursor_move_timer ~= nil then
-          vim.fn.timer_stop(cursor_move_timer)
-        end
-        cursor_move_timer = vim.fn.timer_start(300, function ()
-          Actions.sync_cursor()
-
-          cursor_move_timer = nil
-        end)
+          Actions.refresh_buffer()
       end
     end,
     group = vim.api.nvim_create_augroup("intellij_on_vim_buf_write_post", {clear = true}),
@@ -55,8 +47,7 @@ M.setup = function()
 
   vim.api.nvim_create_autocmd("FocusLost", {
     callback = function(event)
-      vim.cmd("w")
-      vim.fn.timer_start(500, function ()
+      vim.fn.timer_start(300, function ()
         Actions.sync_cursor()
       end)
     end,
